@@ -1,0 +1,112 @@
+{
+  "name": "El Gran Sellado de Aethelgard",
+  "description": "Un reino de erudición arcana y sombras perpetuas, donde el cataclismo de la caída de los tres soles obligó a los sabios a sellar la luz viva en monolitos de obsidiana. Ahora, órdenes sacras, inquisidores y herejes conspiran por el control de la última llama.",
+  "entries": [
+    {
+      "temp_id": "char_lyanna",
+      "type": "personaje",
+      "name": "Lady Lyanna de Arnor",
+      "summary": "Gran Maestre de la Orden del Ocaso y guardiana del último monolito solar.",
+      "details": "Nacida en la alta nobleza de Arnor, Lyanna consagró su vida al estudio de los sellos primigenios tras la caída del Tercer Sol. Es fría en el mando pero profundamente devota a la preservación del conocimiento. Guarda el secreto de que el tercer monolito está perdiendo su fulgor.",
+      "tags": ["noble", "erudita", "guardiana", "luz"]
+    },
+    {
+      "temp_id": "char_valerius",
+      "type": "personaje",
+      "name": "Valerius el Hereje",
+      "summary": "Antiguo archivero mayor de la corte, desterrado por descifrar los rituales de ceniza prohibidos.",
+      "details": "Valerius sostiene que los monolitos no preservan la luz, sino que consumen lentamente las almas de quienes habitan cerca. Desde su refugio en las Tierras Yermas, busca romper los sellos para liberar el fuego frío primigenio, sin importar el costo para la Ciudadela.",
+      "tags": ["hereje", "archivero", "desterrado", "ceniza"]
+    },
+    {
+      "temp_id": "char_kaelen",
+      "type": "personaje",
+      "name": "Kaelen el Silente",
+      "summary": "Infiltrado y custodio de las sombras leal a Lady Lyanna.",
+      "details": "Creció en los suburbios subterráneos de la Ciudadela. Mudo por elección tras un ritual de iniciación, actúa como los ojos y la daga de la Orden frente a los cultos que intentan robar fragmentos de obsidiana.",
+      "tags": ["infiltrado", "asesino", "sombras"]
+    },
+    {
+      "temp_id": "faction_orden",
+      "type": "faccion",
+      "name": "La Orden del Ocaso Radiante",
+      "summary": "Hermandad sacra de escribas y caballeros custodios de los tres monolitos de obsidiana.",
+      "details": "Fundada inmediatamente después de la Noche de los Tres Soles. Gobierna de facto desde la Ciudadela Central, dictando las leyes de racionamiento de luz y persiguiendo con inquisidores a todo aquel que practique la piroquinesis no autorizada.",
+      "tags": ["orden", "gobierno", "inquisicion", "monolitos"]
+    },
+    {
+      "temp_id": "place_ciudadela",
+      "type": "lugar",
+      "name": "La Ciudadela de Obsidiana",
+      "summary": "Fortaleza monumental erigida sobre el cráter donde impactó el último fragmento estelar.",
+      "details": "Sus muros negros absorben la escasa luz ambiental y la canalizan a través de runas grabadas en basalto. En su corazón yace la Cámara del Sello Mayor, custodiada día y noche por los Caballeros del Ocaso.",
+      "tags": ["capital", "fortaleza", "crater", "sagrado"]
+    },
+    {
+      "temp_id": "magic_ceniza",
+      "type": "magia",
+      "name": "La Piroquinesis de Ceniza",
+      "summary": "Arte arcana que enciende fuego blanco y frío a cambio de consumir recuerdos del invocador.",
+      "details": "Leyes fundamentales: El fuego de ceniza no produce humo ni calor convencional, pero calcina la materia inorgánica y revela escrituras invisibles. Costo arcano: Cada ignición borra un recuerdo personal de la infancia o de seres queridos del practicante.",
+      "tags": ["fuego", "sacrificio", "memoria", "runas"]
+    },
+    {
+      "temp_id": "event_noche",
+      "type": "evento",
+      "name": "La Noche de los Tres Soles",
+      "date_in_world": "Año 0 del Ocaso",
+      "summary": "El cataclismo celeste en el que las tres luminarias colapsaron, dando inicio a la era de las tinieblas.",
+      "details": "Durante tres días la tierra tembló mientras los soles se tornaban negros. Los primeros escribas forjaron los monolitos para capturar la radiación residual antes de que el mundo se congelara por completo.",
+      "tags": ["cataclismo", "origen", "era"]
+    },
+    {
+      "temp_id": "event_conclave",
+      "type": "evento",
+      "name": "El Gran Cónclave de las Llamas",
+      "date_in_world": "Año 142 del Ocaso",
+      "summary": "Asamblea histórica donde se decretó el destierro de los piroquinéticos y la censura de los rituales de ceniza.",
+      "details": "Tras el incendio del archivo septentrional, la Orden declaró herejía todo uso de la llama blanca sin autorización del Alto Consejo, provocando el cisma con Valerius y sus seguidores.",
+      "tags": ["tratado", "cisma", "politica"]
+    },
+    {
+      "temp_id": "term_fulgor",
+      "type": "termino",
+      "name": "Fulgor Residual",
+      "summary": "Término vernáculo para la fosforescencia que emiten los monolitos durante las horas de vigilia.",
+      "details": "En el dialecto de la Ciudadela, referirse al «fulgor» denota tanto la luz física como el estado de cordura, templanza y salud de una persona.",
+      "tags": ["lexico", "dialecto", "luz"]
+    }
+  ],
+  "relations": [
+    {
+      "from_temp_id": "char_lyanna",
+      "to_temp_id": "faction_orden",
+      "relation_type": "líder supremo de",
+      "note": "Elegida por unanimidad tras el cónclave"
+    },
+    {
+      "from_temp_id": "char_valerius",
+      "to_temp_id": "faction_orden",
+      "relation_type": "enemigo jurado de",
+      "note": "Desterrado por cargos de herejía arcana"
+    },
+    {
+      "from_temp_id": "char_kaelen",
+      "to_temp_id": "char_lyanna",
+      "relation_type": "leal protector de",
+      "note": "Vinculado por juramento sagrado de sangre"
+    },
+    {
+      "from_temp_id": "faction_orden",
+      "to_temp_id": "place_ciudadela",
+      "relation_type": "gobierna desde",
+      "note": "Sede principal del Alto Consejo"
+    },
+    {
+      "from_temp_id": "char_valerius",
+      "to_temp_id": "magic_ceniza",
+      "relation_type": "maestro de",
+      "note": "Ha sacrificado gran parte de sus recuerdos de infancia"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { TopNav } from "@/components/layout/TopNav";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/Card";
 import { ButtonGold } from "@/components/ui/ButtonGold";
@@ -9,15 +10,18 @@ import { ButtonGhost } from "@/components/ui/ButtonGhost";
 import { SealIcon } from "@/components/ui/SealIcon";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/analytics";
+import { cloneStarterWorld } from "@/lib/fixtures/cloneStarterWorld";
 import type { Database } from "@/types/database";
 import type { User } from "@supabase/supabase-js";
 
 type World = Database["public"]["Tables"]["worlds"]["Row"];
 
 export default function MundosPage() {
+  const router = useRouter();
   const [worlds, setWorlds] = useState<World[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [cloningStarter, setCloningStarter] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
   const [resendingEmail, setResendingEmail] = useState(false);
@@ -103,6 +107,29 @@ export default function MundosPage() {
       setError("Error al solicitar el reenvío de confirmación.");
     } finally {
       setResendingEmail(false);
+    }
+  };
+
+  const handleCloneStarterWorld = async () => {
+    if (!user) {
+      setError("Debes iniciar sesión para forjar el mundo de ejemplo.");
+      return;
+    }
+    if (!isEmailVerified) {
+      setError("Debes confirmar tu correo electrónico antes de poder forjar un mundo.");
+      return;
+    }
+
+    setCloningStarter(true);
+    setError(null);
+    setBannerMessage(null);
+
+    const result = await cloneStarterWorld(user.id);
+    if (!result.success || !result.worldId) {
+      setError(result.error || "No se pudo forjar el mundo de ejemplo.");
+      setCloningStarter(false);
+    } else {
+      router.push(`/mundos/${result.worldId}`);
     }
   };
 
@@ -304,25 +331,36 @@ export default function MundosPage() {
           </div>
 
           {!isCreating && (
-            <div className="flex flex-col items-end gap-1">
-              <ButtonGold
-                onClick={() => {
-                  if (!isEmailVerified) {
-                    setError("Debes confirmar tu correo electrónico antes de poder escribir un nuevo mundo.");
-                    return;
-                  }
-                  setIsCreating(true);
-                }}
-                disabled={!isEmailVerified}
+            <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2">
+              <ButtonGhost
+                onClick={handleCloneStarterWorld}
+                disabled={!isEmailVerified || cloningStarter}
+                loading={cloningStarter}
                 size="md"
+                title="Clonar 'El Gran Sellado de Aethelgard' con personajes, magia y cronología"
               >
-                + Escribir nuevo mundo
-              </ButtonGold>
-              {!isEmailVerified && !loading && (
-                <span className="text-xs font-mono text-muted">
-                  Requiere correo verificado
-                </span>
-              )}
+                ✦ Clonar mundo de ejemplo
+              </ButtonGhost>
+              <div className="flex flex-col items-end gap-1">
+                <ButtonGold
+                  onClick={() => {
+                    if (!isEmailVerified) {
+                      setError("Debes confirmar tu correo electrónico antes de poder escribir un nuevo mundo.");
+                      return;
+                    }
+                    setIsCreating(true);
+                  }}
+                  disabled={!isEmailVerified || cloningStarter}
+                  size="md"
+                >
+                  + Escribir nuevo mundo
+                </ButtonGold>
+                {!isEmailVerified && !loading && (
+                  <span className="text-xs font-mono text-muted">
+                    Requiere correo verificado
+                  </span>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -548,33 +586,72 @@ export default function MundosPage() {
 
         {/* Estado Vacío */}
         {!loading && !error && worlds.length === 0 && (
-          <div className="text-center py-20 px-4 max-w-lg mx-auto space-y-6">
-            <div className="w-16 h-16 rounded-full bg-ink-panel border border-ink-border flex items-center justify-center mx-auto text-gold">
-              <SealIcon size={32} />
+          <div className="py-10 px-4 max-w-xl mx-auto space-y-8">
+            <div className="text-center space-y-3">
+              <div className="w-16 h-16 rounded-full bg-ink-panel border border-ink-border flex items-center justify-center mx-auto text-gold">
+                <SealIcon size={32} />
+              </div>
+              <div className="space-y-2">
+                <h2 className="font-display text-2xl uppercase tracking-wider text-parchment">
+                  Esta página todavía está en blanco
+                </h2>
+                <p className="text-muted text-sm font-body leading-relaxed max-w-md mx-auto">
+                  ¿Cuál será el primer universo que se escriba aquí? Puedes forjar tu reino desde cero o clonar un mundo precargado para explorar el grimorio y al Oráculo.
+                </p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <h2 className="font-display text-xl uppercase tracking-wider text-parchment">
-                Esta página todavía está en blanco
-              </h2>
-              <p className="text-muted text-sm font-body leading-relaxed">
-                ¿Cuál será el primer mundo que se escriba aquí? Dale nombre y comienza a catalogar sus personajes, magia y leyendas.
-              </p>
-            </div>
-            <ButtonGold
-              onClick={() => {
-                if (!isEmailVerified) {
-                  setError("Debes confirmar tu correo electrónico antes de poder escribir un nuevo mundo.");
-                  return;
-                }
-                setIsCreating(true);
-              }}
-              disabled={!isEmailVerified}
-            >
-              Escribir el primer mundo
-            </ButtonGold>
+
+            {/* Showcase Card del Mundo de Ejemplo */}
+            <Card className="border-gold/50 bg-ink-panel p-6 relative overflow-hidden shadow-2xl space-y-4 text-left">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gold" />
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono uppercase tracking-widest text-gold flex items-center gap-1">
+                  <span>✦</span>
+                  <span>Manuscrito de Ejemplo</span>
+                </span>
+                <span className="text-xs font-mono text-muted">
+                  9 entradas • 5 vínculos
+                </span>
+              </div>
+
+              <div>
+                <CardTitle className="text-lg text-parchment">
+                  El Gran Sellado de Aethelgard
+                </CardTitle>
+                <CardDescription className="text-xs font-body text-muted mt-1 leading-relaxed">
+                  Fantasía oscura y erudición arcana donde los tres soles colapsaron y los sabios sellaron la luz en monolitos de obsidiana. Incluye a Lady Lyanna, Valerius el Hereje, la Orden del Ocaso, la Ciudadela y leyes arcanas de ceniza.
+                </CardDescription>
+              </div>
+
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-ink-border">
+                <ButtonGhost
+                  size="sm"
+                  onClick={() => {
+                    if (!isEmailVerified) {
+                      setError("Debes confirmar tu correo electrónico antes de poder escribir un nuevo mundo.");
+                      return;
+                    }
+                    setIsCreating(true);
+                  }}
+                  disabled={!isEmailVerified || cloningStarter}
+                >
+                  Escribir desde cero
+                </ButtonGhost>
+
+                <ButtonGold
+                  size="sm"
+                  onClick={handleCloneStarterWorld}
+                  disabled={!isEmailVerified || cloningStarter}
+                  loading={cloningStarter}
+                >
+                  ✦ Clonar mundo de ejemplo
+                </ButtonGold>
+              </div>
+            </Card>
+
             {!isEmailVerified && (
-              <p className="text-xs font-mono text-muted">
-                Requiere confirmación de correo
+              <p className="text-xs font-mono text-muted text-center">
+                Requiere confirmación de correo electrónico
               </p>
             )}
           </div>
